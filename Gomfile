@@ -1,0 +1,3 @@
+gom 'github.com/smartystreets/goconvey', :tag => '1.4.0'
+gom 'github.com/codegangsta/martini', :commit => 'c5b7389184d31909018876a2c8e5ea1484da0fd6'
+gom 'github.com/robfig/cron', :commit => '483223747f6b728cfe1b327fe05b2fa4dd456b27'
