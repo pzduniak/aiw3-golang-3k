@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf8">
+
+		<title>aIW3 &bull; Dedicated servers</title>
+
+		<link href="http://aiw3.net/styles/aiw2/template/thickbox/thickbox.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="http://aiw3.net/styles/aiw2/theme/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />
+		<link href="http://aiw3.net/style.php?id=2&amp;lang=en" rel="stylesheet" type="text/css" media="screen, projection" />
+		<link href="http://aiw3.net/styles/aiw2/theme/normal.css" rel="stylesheet" type="text/css" title="A" />
+		<link href="http://aiw3.net/styles/aiw2/theme/medium.css" rel="alternate stylesheet" type="text/css" title="A+" />
+		<link href="http://aiw3.net/styles/aiw2/theme/large.css" rel="alternate stylesheet" type="text/css" title="A++" />
+		<link href="http://codeorigin.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
+		<link href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables_themeroller.css" rel="stylesheet" type="text/css" />
+
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+	</head>
+	<body>
+		<div id="bg-bar">
+			<div class="wrapper">
+				<div id="page-header">
+					
+					<div class="headerbar">
+						<div class="inner"><span class="corners-top"><span></span></span>
+
+						<div id="site-description">
+							<a href="http://aiw3.net/index.php" id="logo"><img src="http://aiw3.net/styles/aiw2/imageset/logo.png"></a>
+						</div>
+
+						<div id="top-menu">
+							<ul id="top-menu1">
+								<li style="font-size: 14px"><a href="http://aiw3.net/"><span>&laquo; Back to the website</span></a></li>
+							</ul>
+						</div>
+						<span class="corners-bottom"><span></span></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="wrap">
+			<div id="wrap-inner">
+				<a name="start_here"></a>
+
+				<div id="page-body">
+					<br>
+
+					<div class="navbar pagedada">
+						<span class="corners-top"><span></span></span>
+
+						<span class="corners-bottom"><span></span></span>
+					</div>
+
+					<div class="navbar">
+						<div class="inner"><span class="corners-top"><span></span></span>
+							<ul class="linklist navlinks">
+								<li class="icon-home"><a href="http://aiw3.net/" accesskey="h">Portal</a> <strong>›</strong> <a href="/dedicated.php" accesskey="h">Servers list</a></li>
+							</ul>
+						</div>
+					</div>
+
+<script type="text/javascript">
+
+function hostname(s) {
+    s = s.replace(/\^0/g, '</span><span style="color: #000000">')
+    s = s.replace(/\^1/g, '</span><span style="color: #DA0120">')
+    s = s.replace(/\^2/g, '</span><span style="color: #00B906">')
+    s = s.replace(/\^3/g, '</span><span style="color: #AFC013">')
+    s = s.replace(/\^4/g, '</span><span style="color: #170BDB">')
+    s = s.replace(/\^5/g, '</span><span style="color: #23C2C6">')
+    s = s.replace(/\^6/g, '</span><span style="color: #E201DB">')
+    s = s.replace(/\^7/g, '</span><span style="color: #000000">')
+    s = s.replace(/\^8/g, '</span><span style="color: #CA7C27">')
+    s = s.replace(/\^9/g, '</span><span style="color: #757575">')
+    return '<span>' + s + '</span>'
+}
+
+function mapname(name) {
+	return {"mp_abandon":"Carnival",
+	"mp_afghan":"Afghan",
+	"mp_boneyard":"Scrapyard",
+	"mp_brecourt":"Wasteland",
+	"mp_checkpoint":"Karachi",
+	"mp_compact":"Salvage",
+	"mp_crash":"Crash",
+	"mp_complex":"Bailout",
+	"mp_derail":"Derail",
+	"mp_estate":"Estate",
+	"mp_favela":"Favela",
+	"mp_fuel2":"Fuel",
+	"mp_highrise":"Highrise",
+	"mp_nightshift":"Skidrow",
+	"mp_invasion":"Invasion",
+	"mp_quarry":"Quarry",
+	"mp_rundown":"Rundown",
+	"mp_rust":"Rust",
+	"mp_subbase":"Subbase",
+	"mp_terminal":"Terminal",
+	"mp_trailerpark":"Trailerpark",
+	"mp_underpass":"Underpass",
+	"mp_storm":"Storm",
+	"mp_strike":"Strike",
+	"mp_overgrown":"Overgrown",
+	"mp_vacant":"Vacant",
+	"mp_nuked": "Nuketown",
+	"oilrig": "Oilrig"}[name] || name
+}
+
+function gamemode(name) {
+	return {"gg":"Gun Game",
+		"ss":"Sharpshooter",
+		"oitc":"One in the Chamber",
+		"ctf":"Capture the Flag",
+		"oneflag":"One Flag",
+		"vip":"VIP",
+		"war":"Team Deathmatch",
+		"sd":"Search and Destroy",
+		"koth":"Headquarters",
+		"dom":"Domination",
+		"dm":"Free-for-all",
+		"arena":"Arena",
+		"gtnw":"Global Thermonuclear War",
+		"dd":"Demolition",
+		"sab":"Sabotage",
+		"arena":"Arena",
+		"gtnw":"Global Thermonuclear War"}[name] || name
+}
+
+function mod(name) {
+	if(name == undefined) {
+		return ""
+	}
+
+	return name.replace("mods/", "")
+}
+
+$(function() {
+	$.ajax({
+		url: "http://127.0.0.1:3000/"
+	}).done(function(data) {
+		for (var key in data) {
+			if (data.hasOwnProperty(key) && data[key].hostname) {
+				var srv = data[key];
+
+				$('#serverlist tbody').append(
+					'<tr>' +
+						'<td>' + hostname(srv.hostname) + '</td>' +
+						'<td>' + srv.address + '</td>' +
+						'<td>' + mod(srv.mod) + '</td>' +
+						'<td>' + gamemode(srv.gametype) + '</td>' +
+						'<td>' + mapname(srv.mapname) + '</td>' +
+						'<td>' + srv.players + '/' + srv.max_players + '</td>' +
+					'</tr>'
+				);
+			}
+		}
+
+		$("#serverlist").dataTable({
+			bPaginate: false,
+			bJQueryUI: true
+		});
+	});
+});
+</script>
+
+<div style="serverlist-wrap">
+	<table id="serverlist">
+	    <thead>
+	        <tr class="background">
+	            <th>Hostname</th>
+	            <th>Address</th>
+	            <th>Mod</th>
+	            <th>Gamemode</th>
+	            <th>Map</th>
+	            <th>Online</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
+	</table>
+</div>
+
+
+				<div id="page-footer">
+					<div class="navbar">
+						<div class="inner"><span class="corners-top"><span></span></span>
+
+						<ul class="linklist">
+							<li class="icon-home">
+								<a href="http://aiw3.net/index.php" accesskey="h">Board index</a>
+							</li>
+						</ul>
+
+						<span class="corners-bottom"><span></span></span>
+						</div>
+					</div>
+
+					<div class="copyright">
+						Powered by <a href="http://cloudrack.io/aiw3/server-browser">Orange's aiw3/server-browser</a><br>
+						Skin designed by <a href="http://n0.pointlimit.com">NoFaTe</a>
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<a id="bottom" name="bottom" accesskey="z"></a>
+			</div>
+		</div>
+	</body>
+</html>

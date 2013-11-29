@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/codegangsta/martini"
 	"github.com/robfig/cron"
+	"net/http"
 )
 
 var cache = map[string]*ServerQuery{}
@@ -20,8 +21,14 @@ func PrepareCache() {
 
 func main() {
 	server := martini.Classic()
+
+	server.Use(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	})
+
 	server.Get("/", func() string {
-		json, err := json.Marshal(cache)
+		json, err := json.MarshalIndent(cache, "", "\t")
 
 		if err != nil {
 			return "Error: " + err.Error()
