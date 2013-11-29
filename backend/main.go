@@ -15,6 +15,10 @@ func PrepareCache() {
 		data := server_query(ip)
 		if data != nil {
 			cache[ip] = data
+		} else {
+			if cache[ip] {
+				delete(cache, ip)
+			}
 		}
 	}
 }
