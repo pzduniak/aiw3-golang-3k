@@ -5,6 +5,7 @@ import (
 	"github.com/codegangsta/martini"
 	"github.com/robfig/cron"
 	"net/http"
+	"strconv"
 )
 
 var cache = map[string]*ServerQuery{}
@@ -16,7 +17,7 @@ func PrepareCache() {
 		if data != nil {
 			cache[ip] = data
 		} else {
-			if cache[ip] {
+			if cache[ip] != nil {
 				delete(cache, ip)
 			}
 		}
@@ -29,6 +30,30 @@ func main() {
 	server.Use(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+	})
+
+	server.Get("/total", func() string {
+		players := 0
+
+		for _, server := range cache {
+			num, err := strconv.Atoi(server.Online)
+			if err != nil {
+				players += 0
+			} else {
+				players += num
+			}
+		}
+
+		json, err := json.MarshalIndent(map[string]int {
+			"players": players,
+			"servers": len(cache),
+		}, "", "\t")
+
+		if err != nil {
+			return "Error: " + err.Error()
+		}
+
+		return string(json)
 	})
 
 	server.Get("/", func() string {
