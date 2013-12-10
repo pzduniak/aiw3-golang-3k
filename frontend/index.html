@@ -16,7 +16,8 @@
 
 		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 		<script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
-		<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+		<script src="datatables.js"></script>
 	</head>
 	<body>
 		<div id="bg-bar">
@@ -65,17 +66,17 @@
 <script type="text/javascript">
 
 function hostname(s) {
-    s = s.replace(/\^0/g, '</span><span style="color: #000000">')
-    s = s.replace(/\^1/g, '</span><span style="color: #DA0120">')
-    s = s.replace(/\^2/g, '</span><span style="color: #00B906">')
-    s = s.replace(/\^3/g, '</span><span style="color: #AFC013">')
-    s = s.replace(/\^4/g, '</span><span style="color: #170BDB">')
-    s = s.replace(/\^5/g, '</span><span style="color: #23C2C6">')
-    s = s.replace(/\^6/g, '</span><span style="color: #E201DB">')
-    s = s.replace(/\^7/g, '</span><span style="color: #000000">')
-    s = s.replace(/\^8/g, '</span><span style="color: #CA7C27">')
-    s = s.replace(/\^9/g, '</span><span style="color: #757575">')
-    return '<span>' + s + '</span>'
+	s = s.replace(/\^0/g, '</span><span style="color: #000000">')
+	s = s.replace(/\^1/g, '</span><span style="color: #DA0120">')
+	s = s.replace(/\^2/g, '</span><span style="color: #00B906">')
+	s = s.replace(/\^3/g, '</span><span style="color: #AFC013">')
+	s = s.replace(/\^4/g, '</span><span style="color: #170BDB">')
+	s = s.replace(/\^5/g, '</span><span style="color: #23C2C6">')
+	s = s.replace(/\^6/g, '</span><span style="color: #E201DB">')
+	s = s.replace(/\^7/g, '</span><span style="color: #000000">')
+	s = s.replace(/\^8/g, '</span><span style="color: #CA7C27">')
+	s = s.replace(/\^9/g, '</span><span style="color: #757575">')
+	return '<span>' + s + '</span>'
 }
 
 function mapname(name) {
@@ -139,47 +140,93 @@ function mod(name) {
 
 $(function() {
 	$.ajax({
-		url: "http://127.0.0.1:3000/"
+		url: "http://cloudrack.io:3000/"
 	}).done(function(data) {
 		for (var key in data) {
 			if (data.hasOwnProperty(key) && data[key].hostname) {
 				var srv = data[key];
 
-				$('#serverlist tbody').append(
-					'<tr>' +
-						'<td>' + hostname(srv.hostname) + '</td>' +
-						'<td>' + srv.address + '</td>' +
-						'<td>' + mod(srv.mod) + '</td>' +
-						'<td>' + gamemode(srv.gametype) + '</td>' +
-						'<td>' + mapname(srv.mapname) + '</td>' +
-						'<td>' + srv.players + '/' + srv.max_players + '</td>' +
-					'</tr>'
-				);
+				var tr = $('<tr>');
+				tr.append($('<td>').html(hostname(_.escape(srv.hostname))));
+				tr.append($('<td>').text(srv.address));
+				tr.append($('<td>').html(hostname(mod(_.escape(srv.mod)))));
+				tr.append($('<td>').text(gamemode(srv.gametype)));
+				tr.append($('<td>').text(mapname(srv.mapname)));
+				tr.append($('<td>').text(srv.players + '/' + srv.max_players));
+
+				$('#serverlist tbody').append(tr);
 			}
 		}
 
+		jQuery.fn.dataTableExt.oSort['numeric-comma-asc'] = function(a, b) {
+			var x = (a == "/") ? 0 : a.replace(/,/, ".");
+			var y = (b == "/") ? 0 : b.replace(/,/, ".");
+			x = parseFloat(x);
+			y = parseFloat(y);
+			return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+		};
+
+		jQuery.fn.dataTableExt.oSort['numeric-comma-desc'] = function(a, b) {
+			var x = (a == "/") ? 0 : a.replace(/,/, ".");
+			var y = (b == "/") ? 0 : b.replace(/,/, ".");
+			x = parseFloat(x);
+			y = parseFloat(y);
+			return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+		};
+
+
 		$("#serverlist").dataTable({
-			bPaginate: false,
-			bJQueryUI: true
+			"bPaginate": false,
+			"bJQueryUI": true,
+			"aoColumns": [
+				{"sType": "html"},
+				null,
+				{"sType": "html"},
+				null,
+				null,
+				{"sType": "numeric-comma"}
+			]
 		});
 	});
 });
 </script>
 
+<style type="text/css">
+#serverlist {
+	font-size: 12px;
+}
+
+table.dataTable tr.odd td.sorting_1 {
+	background: #eeeeee;
+}
+
+table.dataTable tr.even td.sorting_1 {
+	background: #fafafa;
+}
+
+table.dataTable tr.odd {
+	background: #f4f4f4;
+}
+
+table.dataTable tr.even {
+	background: #fcfcfc;
+}
+</style>
+
 <div style="serverlist-wrap">
 	<table id="serverlist">
-	    <thead>
-	        <tr class="background">
-	            <th>Hostname</th>
-	            <th>Address</th>
-	            <th>Mod</th>
-	            <th>Gamemode</th>
-	            <th>Map</th>
-	            <th>Online</th>
-	        </tr>
-	    </thead>
-	    <tbody>
-	    </tbody>
+		<thead>
+			<tr class="background">
+				<th>Hostname</th>
+				<th>Address</th>
+				<th>Mod</th>
+				<th>Gamemode</th>
+				<th>Map</th>
+				<th>Online</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
 	</table>
 </div>
 
