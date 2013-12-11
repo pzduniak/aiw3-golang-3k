@@ -1,0 +1,13 @@
+[master]
+address="server.aiw3.net:20810"
+
+[logging]
+enabled=true
+connection_string="postgres://username:password@hostname/dbname?sslmode=disable"
+table_name="history"
+
+[newrelic]
+enabled=false
+verbose=false
+license="hurr durr"
+name="3K API"

@@ -1,12 +1,12 @@
-package main
+package aiw3
 
 import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
 	"net"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type Result struct {
@@ -18,8 +18,8 @@ type Result struct {
 	Port2 uint8
 }
 
-func query_aiw3_master() []string {
-	address, err := net.ResolveUDPAddr("udp", "server.aiw3.net:20810")
+func QueryMasterServer(ipaddr string) []string {
+	address, err := net.ResolveUDPAddr("udp", ipaddr)
 	conn, err := net.DialUDP("udp", nil, address)
 	if err != nil {
 		panic(err)
@@ -53,13 +53,13 @@ func query_aiw3_master() []string {
 			var result Result
 			binary.Read(buf, binary.BigEndian, &result)
 
-			port := int(result.Port1) * 256 + int(result.Port2)
+			port := int(result.Port1)*256 + int(result.Port2)
 
 			ip := strconv.Itoa(int(result.IP1)) + "." +
-			      strconv.Itoa(int(result.IP2)) + "." +
-			      strconv.Itoa(int(result.IP3)) + "." +
-			      strconv.Itoa(int(result.IP4)) + ":" +
-			      strconv.Itoa(port)
+				strconv.Itoa(int(result.IP2)) + "." +
+				strconv.Itoa(int(result.IP3)) + "." +
+				strconv.Itoa(int(result.IP4)) + ":" +
+				strconv.Itoa(port)
 
 			found = append(found, ip)
 		}

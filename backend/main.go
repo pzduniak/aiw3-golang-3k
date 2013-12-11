@@ -1,97 +1,65 @@
 package main
 
 import (
+	"./config"
 	"database/sql"
-	"encoding/json"
 	"github.com/codegangsta/martini"
 	_ "github.com/lib/pq"
 	"github.com/robfig/cron"
+	"github.com/yvasiyarov/gorelic"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 var db *sql.DB
-
-var cache = map[string]*ServerQuery{}
-
-func countPlayers() int {
-	players := 0
-
-	for _, server := range cache {
-		num, err := strconv.Atoi(server.Online)
-		if err != nil {
-			players += 0
-		} else {
-			players += num
-		}
-	}
-
-	return players
-}
-
-func PrepareCache() {
-	ips := query_aiw3_master()
-	for _, ip := range ips {
-		data := server_query(ip)
-		if data != nil {
-			cache[ip] = data
-		} else {
-			if cache[ip] != nil {
-				delete(cache, ip)
-			}
-		}
-	}
-
-	_, err := db.Query(`INSERT INTO history(time, servers, players) VALUES(NOW(), $1, $2)`, len(cache), countPlayers())
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+var agent *gorelic.Agent
+var cfg config.Config
 
 func main() {
-	h, err := sql.Open("postgres", "user=aiw3 dbname=aiw3_history")
-	if err != nil {
-		log.Fatal(err)
+	// Load the configuration into a package-scope variable
+	cfg = config.Load()
+
+	// Start the NewRelic client if it's enabled in the config file
+	if cfg.NewRelic.Enabled {
+		agent = gorelic.NewAgent()
+		agent.Verbose = cfg.NewRelic.Verbose
+		agent.NewrelicName = cfg.NewRelic.Name
+		agent.NewrelicLicense = cfg.NewRelic.License
+		agent.Run()
 	}
 
-	db = h
+	// Connect to the database if logging is enabled in config
+	if cfg.Logging.Enabled {
+		connection, err := sql.Open("postgres", cfg.Logging.ConnectionString)
+		if err != nil {
+			log.Printf("Connection to the database failed; %s", err)
+		}
 
+		// Export the database connection to package scope
+		db = connection
+	}
+
+	// Initialize a new martini server
 	server := martini.Classic()
 
+	// Allow CORS
 	server.Use(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	})
 
-	server.Get("/total", func() string {
-		json, err := json.MarshalIndent(map[string]int {
-			"players": countPlayers(),
-			"servers": len(cache),
-		}, "", "\t")
+	// Bind the routes
+	server.Get("/total", handleTotal)
+	server.Get("/", handleList)
 
-		if err != nil {
-			return "Error: " + err.Error()
-		}
-
-		return string(json)
-	})
-
-	server.Get("/", func() string {
-		json, err := json.MarshalIndent(cache, "", "\t")
-
-		if err != nil {
-			return "Error: " + err.Error()
-		}
-
-		return string(json)
-	})
-
+	// Initialize a new scheudler
 	scheudle := cron.New()
-	scheudle.AddFunc("@every 1m", PrepareCache)
+	scheudle.AddFunc("@every 1m", prepareCache)
 
-	PrepareCache()
+	// Call the cache function for the first time
+	prepareCache()
 
+	// Run threads
 	scheudle.Start()
 	server.Run()
 }

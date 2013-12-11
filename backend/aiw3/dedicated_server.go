@@ -1,4 +1,4 @@
-package main
+package aiw3
 
 import (
 	"fmt"
@@ -24,8 +24,8 @@ func purify_host(a string) string {
 	return a
 }
 
-func server_query(address string) *ServerQuery {
-	conn, err := net.DialTimeout("udp", address, time.Second * 3)
+func QueryDedicatedServer(address string) *ServerQuery {
+	conn, err := net.DialTimeout("udp", address, time.Second*3)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +49,7 @@ func server_query(address string) *ServerQuery {
 
 			data := strings.Split(string(received), "\\")[1:]
 
-			if len(data) % 2 != 0 {
+			if len(data)%2 != 0 {
 				fmt.Printf("[server_query] error: invalid packet returned\n")
 			}
 
@@ -58,7 +58,7 @@ func server_query(address string) *ServerQuery {
 
 			for i := 0; i < len(data); i = i + 2 {
 				key := data[i]
-				value := data[i + 1]
+				value := data[i+1]
 				merged[key] = value
 			}
 
