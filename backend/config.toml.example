@@ -1,6 +1,14 @@
 [master]
 address="server.aiw3.net:20810"
 
+[binding]
+http_enabled=true
+http_address=":3000"
+https_enabled=true
+https_address=":3001"
+https_certificate_path="3k.pem"
+https_key_path="3k.key"
+
 [logging]
 enabled=true
 connection_string="postgres://username:password@hostname/dbname?sslmode=disable"

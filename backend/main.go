@@ -61,5 +61,24 @@ func main() {
 
 	// Run threads
 	scheudle.Start()
-	server.Run()
+
+	// Run SSL if enabled
+	if cfg.Binding.HttpsEnabled {
+		go func() {
+			err := http.ListenAndServeTLS(cfg.Binding.HttpsAddress,
+				cfg.Binding.HttpsCertificatePath,
+				cfg.Binding.HttpsKeyPath,
+				server)
+
+			if err != nil {
+				log.Fatalf("Error while serving HTTPS; %s", err)
+			}
+		}()
+	}
+
+	// Run HTTP
+	err := http.ListenAndServe(cfg.Binding.HttpAddress, server)
+	if err != nil {
+		log.Fatalf("Error while serving HTTP; %s", err)
+	}
 }
