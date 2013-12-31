@@ -1,3 +1,5 @@
 backend/vendor
+backend/backend
+*.sh
 backend/backend.exe
 backend/config.toml
