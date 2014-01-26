@@ -25,7 +25,7 @@ func QueryMasterServer(ipaddr string) []string {
 		panic(err)
 	}
 
-	fmt.Fprintf(conn, "\xFF\xFF\xFF\xFFgetservers IW4 142 full empty\x00")
+	fmt.Fprintf(conn, "\xFF\xFF\xFF\xFFgetservers IW4 61586 full empty\x00")
 
 	var total string
 
